@@ -16,14 +16,16 @@
 
 ## 下载源码
 
-
-###1. gihub
-地址:https://github.com/gdbinit/MachOView
-
-下载下来的源码不兼容最新的Xcode版本，需要做一些修改
-
-###2. sourceforge
+###1. sourceforge
 
 地址:https://sourceforge.net/p/machoview/code/ci/master/tree/
 
 这里的代码是最新的
+
+###2. gihub
+地址:https://github.com/gdbinit/MachOView
+
+下载下来的源码不兼容最新的Xcode版本，需要做一些修改
+
+里面就是修改后的代码
+
