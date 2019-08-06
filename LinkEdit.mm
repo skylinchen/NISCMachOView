@@ -992,21 +992,26 @@ using namespace std;
                        ? [nameToStore stringByAppendingFormat:@"(%@)", symbolName] 
                        : [NSString stringWithFormat:@"0x%qX (%@)", nlist_64->n_value, symbolName]);
         
-        [symbolNames setObject:nameToStore
-                        forKey:[NSNumber numberWithUnsignedLongLong:nlist_64->n_value]];
+          if(nameToStore){
+              [symbolNames setObject:nameToStore
+                              forKey:[NSNumber numberWithUnsignedLongLong:nlist_64->n_value]];
+          }        
       }
     } 
     else
     {
-      [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
+        [node.details appendRow:[NSString stringWithFormat:@"%.8lX", range.location]
                              :lastReadHex
                              :@"Value"
                              :[NSString stringWithFormat:@"%qu", nlist_64->n_value]];
       
-      // fill in lookup table with undefined sybols (key equals (-1) * index)
-      uint64_t key = *symbols_64.begin() - nlist_64 - 1;
-      [symbolNames setObject:symbolName
-                      forKey:[NSNumber numberWithUnsignedLongLong:key]];
+        // fill in lookup table with undefined sybols (key equals (-1) * index)
+        uint64_t key = *symbols_64.begin() - nlist_64 - 1;
+        if(symbolName){
+            [symbolNames setObject:symbolName
+                            forKey:[NSNumber numberWithUnsignedLongLong:key]];
+        }
+      
     }
     
     [node.details setAttributesFromRowIndex:bookmark:MVMetaDataAttributeName,symbolName,
