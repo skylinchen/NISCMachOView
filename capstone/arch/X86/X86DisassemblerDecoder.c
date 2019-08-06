@@ -77,7 +77,7 @@ struct ContextDecision {
  */
 static InstructionContext contextForAttrs(uint16_t attrMask)
 {
-	return CONTEXTS_SYM[attrMask];
+	return (InstructionContext)(CONTEXTS_SYM[attrMask]);
 }
 
 /*
@@ -280,7 +280,7 @@ static const struct InstructionSpecifier *specifierForUID(InstrUID uid)
  */
 static int consumeByte(struct InternalInstruction *insn, uint8_t *byte)
 {
-	int ret = insn->reader(insn->readerArg, byte, insn->readerCursor);
+	int ret = insn->reader((const struct reader_info *)insn->readerArg, byte, insn->readerCursor);
 
 	if (!ret)
 		++(insn->readerCursor);
@@ -297,7 +297,7 @@ static int consumeByte(struct InternalInstruction *insn, uint8_t *byte)
  */
 static int lookAtByte(struct InternalInstruction *insn, uint8_t *byte)
 {
-	return insn->reader(insn->readerArg, byte, insn->readerCursor);
+	return insn->reader((const struct reader_info *)insn->readerArg, byte, insn->readerCursor);
 }
 
 static void unconsumeByte(struct InternalInstruction *insn)
@@ -311,7 +311,7 @@ static void unconsumeByte(struct InternalInstruction *insn)
 		unsigned offset;                                              \
 		for (offset = 0; offset < sizeof(type); ++offset) {           \
 			uint8_t byte;                                               \
-			int ret = insn->reader(insn->readerArg,                     \
+			int ret = insn->reader((const struct reader_info *)insn->readerArg,                     \
 					&byte,                               \
 					insn->readerCursor + offset);        \
 			if (ret)                                                    \
@@ -1861,7 +1861,7 @@ static int readVVVV(struct InternalInstruction *insn)
 	if (insn->mode != MODE_64BIT)
 		vvvv &= 0x7;
 
-	insn->vvvv = vvvv;
+	insn->vvvv = (Reg)vvvv;
 
 	return 0;
 }
@@ -1880,7 +1880,7 @@ static int readMaskRegister(struct InternalInstruction *insn)
 	if (insn->vectorExtensionType != TYPE_EVEX)
 		return -1;
 
-	insn->writemask = aaaFromEVEX4of4(insn->vectorExtensionPrefix[3]);
+	insn->writemask = (Reg)aaaFromEVEX4of4(insn->vectorExtensionPrefix[3]);
 
 	return 0;
 }

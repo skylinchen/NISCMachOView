@@ -489,7 +489,7 @@ void X86_Intel_printInst(MCInst *MI, SStream *O, void *Info)
 	if (mnem)
 		cs_mem_free(mnem);
 	else
-		printInstruction(MI, O, Info);
+		printInstruction(MI, O, (MCRegisterInfo *)Info);
 
 	reg = X86_insn_reg_intel(MCInst_getOpcode(MI));
 	if (MI->csh->detail) {
@@ -568,7 +568,7 @@ static void printOperand(MCInst *MI, unsigned OpNo, SStream *O)
 				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].mem.base = reg;
 			} else {
 				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].type = X86_OP_REG;
-				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].reg = reg;
+				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].reg = (x86_reg)reg;
 				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].size = MI->csh->regsize_map[reg];
 				MI->flat_insn->detail->x86.op_count++;
 			}

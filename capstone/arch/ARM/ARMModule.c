@@ -18,7 +18,7 @@ static cs_err init(cs_struct *ud)
 				CS_MODE_MCLASS | CS_MODE_THUMB | CS_MODE_BIG_ENDIAN))
 		return CS_ERR_MODE;
 
-	mri = cs_mem_malloc(sizeof(*mri));
+	mri = (MCRegisterInfo *)cs_mem_malloc(sizeof(*mri));
 
 	ARM_init(mri);
 	ARM_getRegName(ud, 0);	// use default get_regname

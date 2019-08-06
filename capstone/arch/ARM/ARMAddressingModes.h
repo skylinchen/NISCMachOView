@@ -37,7 +37,7 @@ typedef enum ARM_AM_AddrOpc {
 
 static inline char *ARM_AM_getAddrOpcStr(ARM_AM_AddrOpc Op)
 {
-	return Op == ARM_AM_sub ? "-" : "";
+	return Op == ARM_AM_sub ? (char *)("-") :(char *)("");
 }
 
 static inline char *ARM_AM_getShiftOpcStr(ARM_AM_ShiftOpc Op)

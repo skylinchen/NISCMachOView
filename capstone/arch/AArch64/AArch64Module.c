@@ -17,7 +17,7 @@ static cs_err init(cs_struct *ud)
 	if (ud->mode & ~(CS_MODE_LITTLE_ENDIAN | CS_MODE_ARM | CS_MODE_BIG_ENDIAN))
 		return CS_ERR_MODE;
 
-	mri = cs_mem_malloc(sizeof(*mri));
+	mri = (MCRegisterInfo *)cs_mem_malloc(sizeof(*mri));
 
 	AArch64_init(mri);
 	ud->printer = AArch64_printInst;

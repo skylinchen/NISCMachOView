@@ -422,7 +422,7 @@ void ARM_printInst(MCInst *MI, SStream *O, void *Info)
 						// Fallthrough for non-v8
 				default:
 						// Anything else should just print normally.
-						printInstruction(MI, O, MRI);
+						printInstruction(MI, O, (MCRegisterInfo *)MRI);
 						return;
 			}
 			printPredicateOperand(MI, 1, O);
@@ -677,7 +677,7 @@ void ARM_printInst(MCInst *MI, SStream *O, void *Info)
 				    for(i = isStore ? 3 : 2; i < MCInst_getNumOperands(MI); ++i)
 						MCInst_addOperand2(&NewMI, MCInst_getOperand(MI, i));
 
-				    printInstruction(&NewMI, O, MRI);
+				    printInstruction(&NewMI, O, (MCRegisterInfo *)MRI);
 				    return;
 				}
 		 }
@@ -685,7 +685,7 @@ void ARM_printInst(MCInst *MI, SStream *O, void *Info)
 
 	//if (printAliasInstr(MI, O, MRI))
 	//	printInstruction(MI, O, MRI);
-	printInstruction(MI, O, MRI);
+	printInstruction(MI, O, (MCRegisterInfo *)MRI);
 }
 
 static void printOperand(MCInst *MI, unsigned OpNo, SStream *O)
@@ -832,7 +832,7 @@ static void printSORegRegOperand(MCInst *MI, unsigned OpNum, SStream *O)
 		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].type = ARM_OP_REG;
 		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].reg = MCOperand_getReg(MO1);
 
-		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].shift.type = (MCOperand_getImm(MO3) & 7) + ARM_SFT_ASR_REG - 1;
+		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].shift.type = (arm_shifter)((MCOperand_getImm(MO3) & 7) + ARM_SFT_ASR_REG - 1);
 		MI->flat_insn->detail->arm.op_count++;
 	}
 
@@ -859,7 +859,7 @@ static void printSORegImmOperand(MCInst *MI, unsigned OpNum, SStream *O)
 	if (MI->csh->detail) {
 		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].type = ARM_OP_REG;
 		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].reg = MCOperand_getReg(MO1);
-		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].shift.type = MCOperand_getImm(MO2) & 7;
+		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].shift.type = (arm_shifter)(MCOperand_getImm(MO2) & 7);
 		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].shift.value = (unsigned int)MCOperand_getImm(MO2) >> 3;
 		MI->flat_insn->detail->arm.op_count++;
 	}
@@ -1135,7 +1135,7 @@ static void printPostIdxRegOperand(MCInst *MI, unsigned OpNum, SStream *O)
 	MCOperand *MO1 = MCInst_getOperand(MI, OpNum);
 	MCOperand *MO2 = MCInst_getOperand(MI, OpNum+1);
 
-	SStream_concat0(O, (MCOperand_getImm(MO2) ? "" : "-"));
+	SStream_concat0(O, (MCOperand_getImm(MO2) ? (char *)"" : (char *)"-"));
 	printRegName(MI->csh, O, MCOperand_getReg(MO1));
 	if (MI->csh->detail) {
 		MI->flat_insn->detail->arm.operands[MI->flat_insn->detail->arm.op_count].type = ARM_OP_REG;
@@ -1425,7 +1425,7 @@ static void printCPSIMod(MCInst *MI, unsigned OpNum, SStream *O)
 	SStream_concat0(O, ARM_PROC_IModToString(mode));
 
 	if (MI->csh->detail) {
-		MI->flat_insn->detail->arm.cps_mode = mode;
+		MI->flat_insn->detail->arm.cps_mode = (arm_cpsmode_type)mode;
 	}
 }
 
@@ -1446,7 +1446,7 @@ static void printCPSIFlag(MCInst *MI, unsigned OpNum, SStream *O)
 	}
 
 	if (MI->csh->detail) {
-		MI->flat_insn->detail->arm.cps_flag = IFlags;
+		MI->flat_insn->detail->arm.cps_flag = (arm_cpsflag_type)IFlags;
 	}
 }
 
@@ -1541,7 +1541,7 @@ static void printMSRMaskOperand(MCInst *MI, unsigned OpNum, SStream *O)
 				SStream_concat0(O, "c");
 				reg += ARM_SYSREG_SPSR_C;
 			}
-			ARM_addSysReg(MI, reg);
+			ARM_addSysReg(MI, (arm_sysreg)reg);
 		}
 	} else {
 		SStream_concat0(O, "cpsr");
@@ -1566,7 +1566,7 @@ static void printMSRMaskOperand(MCInst *MI, unsigned OpNum, SStream *O)
 				SStream_concat0(O, "c");
 				reg += ARM_SYSREG_CPSR_C;
 			}
-			ARM_addSysReg(MI, reg);
+			ARM_addSysReg(MI, (arm_sysreg)reg);
 		}
 	}
 }
@@ -1584,7 +1584,7 @@ static void printPredicateOperand(MCInst *MI, unsigned OpNum, SStream *O)
 			SStream_concat0(O, ARMCC_ARMCondCodeToString(CC));
 		}
 		if (MI->csh->detail)
-			MI->flat_insn->detail->arm.cc = CC + 1;
+			MI->flat_insn->detail->arm.cc = (arm_cc)(CC + 1);
 	}
 }
 
@@ -1594,7 +1594,7 @@ static void printMandatoryPredicateOperand(MCInst *MI, unsigned OpNum, SStream *
 	ARMCC_CondCodes CC = (ARMCC_CondCodes)MCOperand_getImm(MCInst_getOperand(MI, OpNum));
 	SStream_concat0(O, ARMCC_ARMCondCodeToString(CC));
 	if (MI->csh->detail)
-		MI->flat_insn->detail->arm.cc = CC + 1;
+		MI->flat_insn->detail->arm.cc = (arm_cc)(CC + 1);
 }
 
 static void printSBitModifierOperand(MCInst *MI, unsigned OpNum, SStream *O)

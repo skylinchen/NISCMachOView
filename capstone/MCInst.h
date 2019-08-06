@@ -27,6 +27,13 @@ typedef struct MCInst MCInst;
 typedef struct cs_struct cs_struct;
 typedef struct MCOperand MCOperand;
 
+enum {
+    kyInvalid = 0,                 ///< Uninitialized.
+    kyRegister,                ///< Register operand.
+    kyImmediate,               ///< Immediate operand.
+    kyFPImmediate,             ///< Floating-point immediate operand.
+} yMachineOperandType;
+
 /// MCOperand - Instances of this class represent operands of the MCInst class.
 /// This is a simple discriminated union.
 struct MCOperand {

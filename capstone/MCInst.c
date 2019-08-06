@@ -81,28 +81,28 @@ void MCInst_addOperand2(MCInst *inst, MCOperand *Op)
 
 void MCOperand_Init(MCOperand *op)
 {
-	op->Kind = kInvalid;
+	op->Kind = kyInvalid;
 	op->FPImmVal = 0.0;
 }
 
 bool MCOperand_isValid(const MCOperand *op)
 {
-	return op->Kind != kInvalid;
+	return op->Kind != kyInvalid;
 }
 
 bool MCOperand_isReg(const MCOperand *op)
 {
-	return op->Kind == kRegister;
+	return op->Kind == kyRegister;
 }
 
 bool MCOperand_isImm(const MCOperand *op)
 {
-	return op->Kind == kImmediate;
+	return op->Kind == kyImmediate;
 }
 
 bool MCOperand_isFPImm(const MCOperand *op)
 {
-	return op->Kind == kFPImmediate;
+	return op->Kind == kyFPImmediate;
 }
 
 /// getReg - Returns the register number.
@@ -141,7 +141,7 @@ MCOperand *MCOperand_CreateReg1(MCInst *mcInst, unsigned Reg)
 {
 	MCOperand *op = &(mcInst->Operands[MCINST_CACHE]);
 
-	op->Kind = kRegister;
+	op->Kind = kyRegister;
 	op->RegVal = Reg;
 
 	return op;
@@ -152,7 +152,7 @@ void MCOperand_CreateReg0(MCInst *mcInst, unsigned Reg)
 	MCOperand *op = &(mcInst->Operands[mcInst->size]);
 	mcInst->size++;
 
-	op->Kind = kRegister;
+	op->Kind = kyRegister;
 	op->RegVal = Reg;
 }
 

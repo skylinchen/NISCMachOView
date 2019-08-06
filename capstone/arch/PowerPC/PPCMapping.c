@@ -7989,10 +7989,10 @@ ppc_reg PPC_map_register(unsigned int r)
 		PPC_REG_R23, PPC_REG_R27, PPC_REG_R31, };
 
 	if (r < ARR_SIZE(map))
-		return map[r];
+		return (ppc_reg)map[r];
 
 	// cannot find this register
-	return 0;
+	return (ppc_reg)0;
 }
 
 static struct ppc_alias alias_insn_name_maps[] = {

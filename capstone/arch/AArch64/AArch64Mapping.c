@@ -14842,7 +14842,7 @@ arm64_reg AArch64_map_insn(const char *name)
 		// try again with 'special' insn that is not available in insn_name_maps
 		i = name2id(alias_insn_name_maps, ARR_SIZE(alias_insn_name_maps), name);
 
-	return (i != -1)? i : ARM64_REG_INVALID;
+	return (i != -1)? (arm64_reg)i : ARM64_REG_INVALID;
 }
 
 // map internal raw vregister to 'public' register
@@ -14934,23 +14934,23 @@ arm64_reg AArch64_map_vregister(unsigned int r)
 		ARM64_REG_V28, ARM64_REG_V29, ARM64_REG_V30, ARM64_REG_V31, };
 
 	if (r < ARR_SIZE(map))
-		return map[r];
+		return (arm64_reg)map[r];
 
 	// cannot find this register
-	return 0;
+	return (arm64_reg)0;
 }
 
 void arm64_op_addVectorArrSpecifier(MCInst * MI, int sp)
 {
 	if (MI->csh->detail) {
-		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count - 1].vas = sp;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count - 1].vas = (arm64_vas)sp;
 	}
 }
 
 void arm64_op_addVectorElementSizeSpecifier(MCInst * MI, int sp)
 {
 	if (MI->csh->detail) {
-		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count - 1].vess = sp;
+		MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count - 1].vess = (arm64_vess)sp;
 	}
 }
 

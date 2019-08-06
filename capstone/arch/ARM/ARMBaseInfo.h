@@ -117,19 +117,19 @@ inline static char *ARM_MB_MemBOptToString(unsigned val, bool HasV8)
 		default: return "BUGBUG";
 		case ARM_MB_SY:    return "sy";
 		case ARM_MB_ST:    return "st";
-		case ARM_MB_LD: return HasV8 ? "ld" : "#0xd";
+		case ARM_MB_LD: return (char *)(HasV8 ? "ld" : "#0xd");
 		case ARM_MB_RESERVED_12: return "#0xc";
 		case ARM_MB_ISH:   return "ish";
 		case ARM_MB_ISHST: return "ishst";
-		case ARM_MB_ISHLD: return HasV8 ?  "ishld" : "#0x9";
+		case ARM_MB_ISHLD: return (char *)(HasV8 ?  "ishld" : "#0x9");
 		case ARM_MB_RESERVED_8: return "#0x8";
 		case ARM_MB_NSH:   return "nsh";
 		case ARM_MB_NSHST: return "nshst";
-		case ARM_MB_NSHLD: return HasV8 ? "nshld" : "#0x5";
+		case ARM_MB_NSHLD: return (char *)(HasV8 ? "nshld" : "#0x5");
 		case ARM_MB_RESERVED_4: return "#0x4";
 		case ARM_MB_OSH:   return "osh";
 		case ARM_MB_OSHST: return "oshst";
-		case ARM_MB_OSHLD: return HasV8 ? "oshld" : "#0x1";
+		case ARM_MB_OSHLD: return (char *)(HasV8 ? "oshld" : "#0x1");
 		case ARM_MB_RESERVED_0: return "#0x0";
 	}
 }

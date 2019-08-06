@@ -487,7 +487,7 @@ static void printOperand(MCInst *MI, unsigned OpNo, SStream *O)
 				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].mem.base = reg;
 			} else {
 				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].type = X86_OP_REG;
-				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].reg = reg;
+				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].reg = (x86_reg)reg;
 				MI->flat_insn->detail->x86.operands[MI->flat_insn->detail->x86.op_count].size = MI->csh->regsize_map[reg];
 				MI->flat_insn->detail->x86.op_count++;
 			}
@@ -661,7 +661,7 @@ void X86_ATT_printInst(MCInst *MI, SStream *OS, void *info)
 	if (mnem)
 		cs_mem_free(mnem);
 	else
-		printInstruction(MI, OS, info);
+		printInstruction(MI, OS, (MCRegisterInfo *)info);
 
 	if (MI->has_imm) {
 		// if op_count > 1, then this operand's size is taken from the destination op

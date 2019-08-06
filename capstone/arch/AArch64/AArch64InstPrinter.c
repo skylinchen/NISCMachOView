@@ -314,7 +314,7 @@ void AArch64_printInst(MCInst *MI, SStream *O, void *Info)
 		MCInst_setOpcodePub(MI, AArch64_map_insn(mnem));
 		cs_mem_free(mnem);
 	} else {
-		printInstruction(MI, O, Info);
+		printInstruction(MI, O, (MCRegisterInfo *)Info);
 	}
 }
 
@@ -1018,7 +1018,7 @@ static void printPrefetchOp(MCInst *MI, unsigned OpNum, SStream *O)
 		if (MI->csh->detail) {
 			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_PREFETCH;
 			// we have to plus 1 to prfop because 0 is a valid value of prfop
-			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].prefetch = prfop + 1;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].prefetch = (arm64_prefetch_op)(prfop + 1);
 			MI->flat_insn->detail->arm64.op_count++;
 		}
 	} else {
@@ -1144,8 +1144,8 @@ static void printVectorList(MCInst *MI, unsigned OpNum, SStream *O, char *Layout
 static void printTypedVectorList(MCInst *MI, unsigned OpNum, SStream *O, unsigned NumLanes, char LaneKind, MCRegisterInfo *MRI)
 {
 	char Suffix[32];
-	arm64_vas vas = 0;
-	arm64_vess vess = 0;
+	arm64_vas vas = ARM64_VAS_INVALID;
+	arm64_vess vess = ARM64_VESS_INVALID;
 
 	if (NumLanes) {
 		cs_snprintf(Suffix, sizeof(Suffix), ".%u%c", NumLanes, LaneKind);
@@ -1292,7 +1292,7 @@ static void printBarrierOption(MCInst *MI, unsigned OpNo, SStream *O)
 		SStream_concat0(O, Name);
 		if (MI->csh->detail) {
 			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_BARRIER;
-			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].barrier = Val;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].barrier = (arm64_barrier_op)Val;
 			MI->flat_insn->detail->arm64.op_count++;
 		}
 	} else {
@@ -1352,7 +1352,7 @@ static void printSystemPStateField(MCInst *MI, unsigned OpNo, SStream *O)
 		SStream_concat0(O, Name);
 		if (MI->csh->detail) {
 			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].type = ARM64_OP_PSTATE;
-			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].pstate = Val;
+			MI->flat_insn->detail->arm64.operands[MI->flat_insn->detail->arm64.op_count].pstate = (arm64_pstate)Val;
 			MI->flat_insn->detail->arm64.op_count++;
 		}
 	} else {
